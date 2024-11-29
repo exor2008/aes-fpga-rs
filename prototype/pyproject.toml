@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "prototype"
+version = "0.1.0"
+description = ""
+authors = ["Ian <exor2008@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+mypy = "^1.13.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
