@@ -9,6 +9,24 @@ class KeyType(Enum):
     K256 = 3
 
 
+def gmul(a: int, b: int):
+    p = 0
+    for _ in range(8):
+        if (b & 1) == 1:
+            p ^= a
+
+        hi_bit_set = a & 0x80
+        a <<= 1
+        a &= 0xFF
+
+        if hi_bit_set == 0x80:
+            a ^= 0x1B
+
+        b >>= 1
+
+    return p
+
+
 def gmul2(a: int):
     match a:
         case 1:
@@ -87,42 +105,25 @@ def expand_key(key: bytearray, key_type: KeyType = KeyType.K128):
         c += 4
 
 
-if __name__ == "__main__":
-    key = bytearray(
-        [
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-            0x00,
-        ]
-        * 13
+def add_key(chunk: bytearray, key: bytearray) -> bytearray:
+    return bytearray([a ^ b for a, b in zip(chunk, key)])
+
+
+def sub_bytes(chunk: bytearray) -> bytearray:
+    return bytearray([SBOX[bt] for bt in chunk])
+
+
+def shift_rows(chunk: bytearray) -> bytearray:
+    return (
+        chunk[:4]
+        + chunk[5:8]
+        + chunk[4:4]
+        + chunk[10:12]
+        + chunk[8:10]
+        + chunk[15:15]
+        + chunk[12:15]
     )
 
-    expand_key(key, KeyType.K192)
 
-    print(f"LEN: {len(key)}")
-
-    for i in range(13):
-        for j in range(16):
-            print(f"{key[i * 16 + j]:#x}", end="    ")
-        print()
+if __name__ == "__main__":
+    print(f"R: {gmul(128, 3)}")
