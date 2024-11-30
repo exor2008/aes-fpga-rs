@@ -1,4 +1,12 @@
+from enum import Enum
+
 from prototype.tables import SBOX
+
+
+class KeyType(Enum):
+    K128 = 1
+    K192 = 2
+    K256 = 3
 
 
 def gmul2(a: int):
@@ -44,23 +52,38 @@ def schedule_core(word: bytearray, i: int) -> bytearray:
 
     r[0] ^= rcon(i)
 
-    print(r, i)
-
     return bytearray(r)
 
 
-def expand_key(key: bytearray):
-    c = 16
-    i = 1
+def expand_key(key: bytearray, key_type: KeyType = KeyType.K128):
+    match key_type:
+        case KeyType.K128:
+            C_WORD = 16
+            C_MAX = 176
+        case KeyType.K192:
+            C_WORD = 24
+            C_MAX = 208
+        case KeyType.K256:
+            C_WORD = 32
+            C_MAX = 240
 
-    while c < 176:
+    i = 1
+    c = C_WORD
+
+    while c < C_MAX:
         t = key[c - 4 : c]
 
-        if c % 16 == 0:
+        if c % C_WORD == 0:
             t = schedule_core(t, i)
             i += 1
 
-        key[c : c + 4] = [a ^ b for a, b in zip(key[c - 16 : c - 12], t)]
+        if key_type == KeyType.K256:
+            if c % C_WORD == 16:
+                t = bytearray([SBOX[bt] for bt in t])
+
+        key_from = c - C_WORD
+        key_to = c - C_WORD + 4
+        key[c : c + 4] = [a ^ b for a, b in zip(key[key_from:key_to], t)]
         c += 4
 
 
@@ -83,13 +106,23 @@ if __name__ == "__main__":
             0x00,
             0x00,
             0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
         ]
-        * 11
+        * 13
     )
 
-    expand_key(key)
+    expand_key(key, KeyType.K192)
 
-    for i in range(11):
+    print(f"LEN: {len(key)}")
+
+    for i in range(13):
         for j in range(16):
             print(f"{key[i * 16 + j]:#x}", end="    ")
         print()
