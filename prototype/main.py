@@ -125,5 +125,27 @@ def shift_rows(chunk: bytearray) -> bytearray:
     )
 
 
+def mix_column(column: bytearray) -> bytearray:
+    a = bytearray([0] * 4)
+    b = bytearray([0] * 4)
+    c = bytearray([0] * 4)
+
+    for i in range(4):
+        a[i] = column[i]
+        h = column[i] & 0x80
+        s = column[i] << 1
+        b[i] = s & 0xFF
+
+        if h == 0x80:
+            b[i] ^= 0x1B
+
+        c[0] = b[0] ^ a[3] ^ a[2] ^ b[1] ^ a[1]
+        c[1] = b[1] ^ a[0] ^ a[3] ^ b[2] ^ a[2]
+        c[2] = b[2] ^ a[1] ^ a[0] ^ b[3] ^ a[3]
+        c[3] = b[3] ^ a[2] ^ a[1] ^ b[0] ^ a[0]
+
+    return c
+
+
 if __name__ == "__main__":
     print(f"R: {gmul(128, 3)}")
