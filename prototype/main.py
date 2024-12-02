@@ -1,5 +1,7 @@
 from enum import Enum
 
+import numpy as np
+
 from prototype.tables import SBOX
 
 
@@ -105,30 +107,33 @@ def expand_key(key: bytearray, key_type: KeyType = KeyType.K128):
         c += 4
 
 
-def add_key(chunk: bytearray, key: bytearray) -> bytearray:
-    return bytearray([a ^ b for a, b in zip(chunk, key)])
+def add_key(chunk: np.ndarray, key: np.ndarray) -> np.ndarray:
+    if chunk.shape != key.shape:
+        a = 0
+    return chunk ^ key
 
 
-def sub_bytes(chunk: bytearray) -> bytearray:
-    return bytearray([SBOX[bt] for bt in chunk])
+def sub_bytes(chunk: np.ndarray):
+    for i in range(4):
+        for j in range(4):
+            chunk[i, j] = SBOX[chunk[i, j]]
 
 
-def shift_rows(chunk: bytearray) -> bytearray:
-    return (
-        chunk[:4]
-        + chunk[5:8]
-        + chunk[4:4]
-        + chunk[10:12]
-        + chunk[8:10]
-        + chunk[15:15]
-        + chunk[12:15]
+def shift_rows(chunk: np.ndarray) -> np.ndarray:
+    return np.vstack(
+        [
+            chunk[0, :],
+            np.roll(chunk[1, :], -1),
+            np.roll(chunk[2, :], -2),
+            np.roll(chunk[3, :], -3),
+        ]
     )
 
 
-def mix_column(column: bytearray) -> bytearray:
-    a = bytearray([0] * 4)
-    b = bytearray([0] * 4)
-    c = bytearray([0] * 4)
+def mix_column(column: np.ndarray) -> np.ndarray:
+    a = np.zeros(4, dtype=np.uint8)
+    b = np.zeros(4, dtype=np.uint8)
+    c = np.zeros(4, dtype=np.uint8)
 
     for i in range(4):
         a[i] = column[i]
@@ -147,5 +152,56 @@ def mix_column(column: bytearray) -> bytearray:
     return c
 
 
+def to_16x16_matrix(bytes: bytearray) -> np.ndarray:
+    arr = np.asarray(bytes)
+    return arr.reshape(4, -1).T
+
+
+def from_16x16_matrix(arr: np.ndarray) -> bytearray:
+    return bytearray(arr.T.ravel())
+
+
+def initial_round(plaintext: np.ndarray, key: np.ndarray) -> np.ndarray:
+    return add_key(plaintext, key)
+
+
+def normal_round(plaintext: np.ndarray, key: np.ndarray) -> np.ndarray:
+    sub_bytes(plaintext)
+    plaintext = shift_rows(plaintext)
+
+    plaintext[:, 0] = mix_column(plaintext[:, 0])
+    plaintext[:, 1] = mix_column(plaintext[:, 1])
+    plaintext[:, 2] = mix_column(plaintext[:, 2])
+    plaintext[:, 3] = mix_column(plaintext[:, 3])
+
+    return add_key(plaintext, key)
+
+
+def final_round(plaintext: np.ndarray, key: np.ndarray) -> np.ndarray:
+    sub_bytes(plaintext)
+    plaintext = shift_rows(plaintext)
+    return add_key(plaintext, key)
+
+
+def aes(plaintext_bytes: bytearray, key: bytearray) -> bytearray:
+    plaintext = to_16x16_matrix(plaintext_bytes)
+    plaintext = initial_round(plaintext, to_16x16_matrix(key[:16]))
+
+    for i in range(1, 10):
+        plaintext = normal_round(plaintext, to_16x16_matrix(key[i * 16 : (i + 1) * 16]))
+
+    ciphertext = final_round(plaintext, to_16x16_matrix(key[10 * 16 : 11 * 16]))
+    return from_16x16_matrix(ciphertext)
+
+
 if __name__ == "__main__":
-    print(f"R: {gmul(128, 3)}")
+    # fmt: off
+    key = bytearray("1000000000000000" * 11, "ascii")
+    expand_key(key)
+
+    plaintext = bytearray("0000000000000001", "ascii")
+    # fmt: on
+
+    ciphertext = aes(plaintext, key)
+
+    print(ciphertext.hex(), ciphertext)
