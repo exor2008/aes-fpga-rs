@@ -11,24 +11,23 @@ module sbox (input clk,
         end
         else begin
             ciphertext <= {
-            mem[plaintext[127:120]],
-            mem[plaintext[119:112]],
-            mem[plaintext[111:104]],
-            mem[plaintext[103:96]],
-            mem[plaintext[95:88]],
-            mem[plaintext[87:80]],
-            mem[plaintext[79:72]],
-            mem[plaintext[71:64]],
+            mem[plaintext[127:120]],    // 15
+            mem[plaintext[119:112]],    // 14
+            mem[plaintext[111:104]],    // 13
+            mem[plaintext[103:96]],     // 12
+            mem[plaintext[95:88]],      // 11
+            mem[plaintext[87:80]],      // 10
+            mem[plaintext[79:72]],      // 9
+            mem[plaintext[71:64]],      // 8
             
-            mem[plaintext[63:56]],
-            mem[plaintext[55:48]],
-            mem[plaintext[47:40]],
-            mem[plaintext[39:32]],
-            mem[plaintext[31:24]],
-            mem[plaintext[23:16]],
-            mem[plaintext[15:8]],
-            mem[plaintext[7:0]]
-            
+            mem[plaintext[63:56]],      // 7
+            mem[plaintext[55:48]],      // 6
+            mem[plaintext[47:40]],      // 5
+            mem[plaintext[39:32]],      // 4
+            mem[plaintext[31:24]],      // 3
+            mem[plaintext[23:16]],      // 2
+            mem[plaintext[15:8]],       // 1
+            mem[plaintext[7:0]]         // 0
             };
         end
         

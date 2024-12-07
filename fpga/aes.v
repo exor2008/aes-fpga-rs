@@ -20,4 +20,13 @@ module aes (input clk,
     .plaintext(cipher_add_key),
     .ciphertext(cipher_sbox)
     );
+    
+    wire [127: 0] cipher_shift_rows;
+    shift_rows shift_rows(
+    .clk(clk),
+    .rst(rst),
+    .plaintext(cipher_sbox),
+    .ciphertext(cipher_shift_rows)
+    );
+    
 endmodule
