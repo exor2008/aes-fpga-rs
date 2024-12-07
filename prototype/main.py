@@ -144,10 +144,10 @@ def mix_column(column: np.ndarray) -> np.ndarray:
         if h == 0x80:
             b[i] ^= 0x1B
 
-        c[0] = b[0] ^ a[3] ^ a[2] ^ b[1] ^ a[1]
-        c[1] = b[1] ^ a[0] ^ a[3] ^ b[2] ^ a[2]
-        c[2] = b[2] ^ a[1] ^ a[0] ^ b[3] ^ a[3]
-        c[3] = b[3] ^ a[2] ^ a[1] ^ b[0] ^ a[0]
+    c[0] = b[0] ^ a[3] ^ a[2] ^ b[1] ^ a[1]
+    c[1] = b[1] ^ a[0] ^ a[3] ^ b[2] ^ a[2]
+    c[2] = b[2] ^ a[1] ^ a[0] ^ b[3] ^ a[3]
+    c[3] = b[3] ^ a[2] ^ a[1] ^ b[0] ^ a[0]
 
     return c
 
@@ -195,12 +195,11 @@ def aes(plaintext_bytes: bytearray, key: bytearray) -> bytearray:
 
 
 if __name__ == "__main__":
-    # fmt: off
-    key = bytearray("1000000000000000" * 11, "ascii")
+    key = bytearray([0x11] * 16 * 11)
+
     expand_key(key)
 
-    plaintext = bytearray("0000000000000001", "ascii")
-    # fmt: on
+    plaintext = bytearray([0x11] * 8 + [0x00] * 8)
 
     ciphertext = aes(plaintext, key)
 

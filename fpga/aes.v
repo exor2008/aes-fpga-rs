@@ -29,4 +29,12 @@ module aes (input clk,
     .ciphertext(cipher_shift_rows)
     );
     
+    wire [127: 0] cipher_mix_columns;
+    mix_columns mix_columns(
+    .clk(clk),
+    .rst(rst),
+    .plaintext(cipher_shift_rows),
+    .ciphertext(cipher_mix_columns)
+    );
+    
 endmodule

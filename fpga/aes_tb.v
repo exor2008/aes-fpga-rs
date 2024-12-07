@@ -24,9 +24,11 @@ module main_tb();
         $dumpfile(`DUMPSTR(`VCD_OUTPUT));
         $dumpvars(0, main_tb);
         clk = 0;
-        rst = 1;
+        rst = 0;
         
-        #1 rst    = 0;
+        #1 rst = 1;
+        #1 rst = 0;
+        
         key       = 'h1111_1111_1111_1111_1111_1111_1111_1111;
         plaintext = 'h0000_0000_0000_0000_1111_1111_1111_1111;
         
