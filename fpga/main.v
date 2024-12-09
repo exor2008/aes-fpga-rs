@@ -1,12 +1,21 @@
 module main (input clk,
              input rst,
-             input [127:0] key,
+             input key_w_clk,
+             input [15:0] in,
              input [127:0] plaintext);
     
-    aes aes(
+    /*     aes aes(
+     .clk(clk),
+     .rst(rst),
+     .key(key),
+     .plaintext(plaintext));
+     */
+    
+    key key(
     .clk(clk),
     .rst(rst),
-    .key(key),
-    .plaintext(plaintext));
+    .w_clk(key_w_clk),
+    .r_data(in)
+    );
     
 endmodule

@@ -1,7 +1,7 @@
 module mix_columns (input clk,
                     input rst,
                     input [127:0] plaintext,
-                    input [127:0] ciphertext);
+                    inout [127:0] ciphertext);
     
     wire [127:0] shifted;
     reg [127:0] copy_plain;

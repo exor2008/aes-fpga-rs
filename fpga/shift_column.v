@@ -1,7 +1,7 @@
 module shift_column (input clk,
                      input rst,
                      input [31:0] plaincolumn,
-                     input [31:0] ciphercolumn);
+                     inout [31:0] ciphercolumn);
     
     shift_byte b1(
     .clk(clk),

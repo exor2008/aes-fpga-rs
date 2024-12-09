@@ -4,11 +4,12 @@
 
 module main_tb();
     
-    parameter DURATION = 20;
+    parameter DURATION = 100;
     
     reg rst;
     reg clk;
-    reg [127:0] key;
+    reg w_clk;
+    reg [15:0] key;
     reg [127:0] plaintext;
     
     always #1 clk = ~clk;
@@ -16,41 +17,100 @@ module main_tb();
     main uut(
     .clk(clk),
     .rst(rst),
-    .key(key),
+    .key_w_clk(w_clk),
+    .in(key),
     .plaintext(plaintext)
     );
     
     initial begin
         $dumpfile(`DUMPSTR(`VCD_OUTPUT));
         $dumpvars(0, main_tb);
-        clk = 0;
-        rst = 0;
+        clk   = 0;
+        rst   = 0;
+        w_clk = 0;
         
         #1 rst = 1;
         #1 rst = 0;
         
-        key       = 'h1111_1111_1111_1111_1111_1111_1111_1111;
-        plaintext = 'h0000_0000_0000_0000_1111_1111_1111_1111;
+        #0.7
+        key        = 'h1111_1111;
+        w_clk      = 1;
+        #0.1 w_clk = 0;
         
-        #2
-        key       = 'h1000_0200_0000_0000_0003_0002_0001_0001;
-        plaintext = 'h0000_0000_0000_0000_0000_0000_0000_0000;
+        #1.1
+        key        = 'h2222_2222;
+        w_clk      = 1;
+        #0.3 w_clk = 0;
         
-        #2
-        key       = 'h0000_0000_0000_0000_0000_0000_0000_0000;
-        plaintext = 'h0000_0000_0000_0000_0000_0000_0000_0000;
+        #0.7
+        key        = 'h3333_3333;
+        w_clk      = 1;
+        #0.2 w_clk = 0;
         
-        #2
-        key       = 'h0000_FFFF_0000_FFFF_0000_FFFF_0000_FFFF;
-        plaintext = 'hFFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF_FFFF;
+        #0.9
+        key        = 'h4444_4444;
+        w_clk      = 1;
+        #0.3 w_clk = 0;
         
-        #2
-        key       = 'h00FF_00FF_00FF_00FF_00FF_00FF_00FF_00FF;
-        plaintext = 'h0000_0000_FFFF_FFFF_0000_0000_FFFF_FFFF;
+        #1
+        key        = 'h5555_5555;
+        w_clk      = 1;
+        #0.3 w_clk = 0;
         
-        #2
-        key       = 'hFF00_FF00_FF00_FF00_FF00_FF00_FF00_FF00;
-        plaintext = 'hFFFF_0000_FFFF_FFFF_0000_0000_FFFF_0000;
+        #0.8
+        key        = 'h6666_6666;
+        w_clk      = 1;
+        #0.4 w_clk = 0;
+        
+        #1.1
+        key        = 'h7777_7777;
+        w_clk      = 1;
+        #0.2 w_clk = 0;
+        
+        #1
+        key        = 'h8888_8888;
+        w_clk      = 1;
+        #0.2 w_clk = 0;
+        
+        #0.9
+        key        = 'h1111_1111;
+        w_clk      = 1;
+        #0.2 w_clk = 0;
+        
+        #1
+        key        = 'h2222_2222;
+        w_clk      = 1;
+        #0.2 w_clk = 0;
+        
+        #1
+        key        = 'h3333_3333;
+        w_clk      = 1;
+        #0.2 w_clk = 0;
+        
+        #1
+        key        = 'h4444_4444;
+        w_clk      = 1;
+        #0.2 w_clk = 0;
+        
+        #1
+        key        = 'h5555_5555;
+        w_clk      = 1;
+        #0.2 w_clk = 0;
+        
+        #1
+        key        = 'h6666_6666;
+        w_clk      = 1;
+        #0.2 w_clk = 0;
+        
+        #1
+        key        = 'h7777_7777;
+        w_clk      = 1;
+        #0.2 w_clk = 0;
+        
+        #1
+        key        = 'h8888_8888;
+        w_clk      = 1;
+        #0.2 w_clk = 0;
         
         
         #(DURATION) $display("End of simulation");
