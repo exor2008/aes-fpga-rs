@@ -7,15 +7,15 @@ module key (input clk,
     reg [3:0] counter;
     reg [1:0] state;
     
-    localparam READ  = 1;
-    localparam WRITE = 2;
-    localparam IDLE  = 0;
+    localparam READ  = 2'b1;
+    localparam WRITE = 2'b10;
+    localparam IDLE  = 2'b0;
     
     always @(posedge w_clk or posedge rst) begin
         if (rst) begin
             offset  <= 0;
             counter <= 0;
-            state   <= IDLE;
+            state   <= WRITE;
         end
         else begin
             case (state)
@@ -60,7 +60,7 @@ module key (input clk,
                 end
                 
                 IDLE: begin
-                    state <= WRITE;
+                    
                 end
             endcase
         end
