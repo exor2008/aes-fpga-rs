@@ -1,11 +1,6 @@
-`default_nettype none
-`define DUMPSTR(x) `"x.vcd`"
 `timescale 100 ns / 10 ns
 
 module main_tb();
-    
-    parameter DURATION = 100;
-    
     reg rst;
     reg clk;
     reg w_clk;
@@ -23,8 +18,6 @@ module main_tb();
     );
     
     initial begin
-        $dumpfile(`DUMPSTR(`VCD_OUTPUT));
-        $dumpvars(0, main_tb);
         clk   = 0;
         rst   = 0;
         w_clk = 0;
@@ -111,9 +104,7 @@ module main_tb();
         key        = 'h8888_8888;
         w_clk      = 1;
         #0.2 w_clk = 0;
-        
-        
-        #(DURATION) $display("End of simulation");
+
         $finish;
     end
     

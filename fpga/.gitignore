@@ -1,5 +1,7 @@
-*.dblite
-*.gtkw
-*.out
-*.vcd
-*.json
+aes.cache/
+aes.hw/
+aes.ip_user_files/
+aes.runs/
+aes.sim/
+*.jou
+*.log
