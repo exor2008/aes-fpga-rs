@@ -5,3 +5,4 @@ aes.runs/
 aes.sim/
 *.jou
 *.log
+*.dcp

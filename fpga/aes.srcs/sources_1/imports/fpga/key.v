@@ -1,8 +1,13 @@
 module key (input clk,
             input rst,
             input w_clk,
-            input [15:0] r_data);
-    reg [127:0] mem [0:16];
+            input [15:0] r_data,
+            output reg [127:0] key0,
+            output reg [127:0] key1,
+            output reg [127:0] key2,
+            output reg [127:0] key3);
+    
+    reg [127:0] mem [0:15];
     reg [3:0] offset;
     reg [3:0] counter;
     reg [1:0] state;
@@ -53,6 +58,10 @@ module key (input clk,
                         offset  <= 0;
                         counter <= counter + 1;
                     end
+                    
+                    if (counter == 'hf) begin
+                        state <= READ;
+                    end
                 end
                 
                 READ: begin
@@ -61,6 +70,25 @@ module key (input clk,
                 
                 IDLE: begin
                     
+                end
+            endcase
+        end
+    end
+    
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            key0 <= 0;
+            key1 <= 0;
+            key2 <= 0;
+            key3 <= 0;
+        end
+        else begin
+            case (state)
+                READ: begin
+                    key0 <= mem[0];
+                    key1 <= mem[1];
+                    key2 <= mem[2];
+                    key3 <= mem[3];
                 end
             endcase
         end
